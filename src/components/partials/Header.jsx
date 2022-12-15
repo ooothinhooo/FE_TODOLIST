@@ -9,29 +9,14 @@ function Header() {
   const [user, setUser] = useState(JSON.parse(info));
   useEffect(() => {
     setUser(JSON.parse(info));
-    get();
   }, []);
-  const todo = localStorage.getItem("todos");
-  const [todos, setTodos] = useState();
-  const [data, setData] = useState();
-  const [todoslength, setTodoslength] = useState();
-  const auth = user?.token;
-  const get = async () => {
-    const data = await getApi(auth);
-    setTodos(Object(data?.data?.data?.todos));
-    localStorage.setItem("todos", JSON.stringify(todos));
-    // console.log("Lưu todo vào local");
 
-    // get();
-  };
   function deleteItem() {
     toast("Đăng xuất Thành Công");
     localStorage.removeItem("user");
-    localStorage.removeItem("todos");
     window.location.reload();
 
     setUser(null);
-    setTodos(null);
   }
   return (
     <>

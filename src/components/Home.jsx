@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { createTodo, deleteTodo, getApi } from "../services/api.js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import { API_URL } from "../config.js";
 function Home() {
   const navigation = useNavigate();
   const info = localStorage.getItem("user");
@@ -12,18 +15,27 @@ function Home() {
   useEffect(() => {
     setUser(JSON.parse(info));
   }, []);
-  const todo = localStorage.getItem("todos");
-  const [todos, setTodos] = useState();
-  const auth = user?.token;
 
-  // console.log(todos);
+  const auth = user?.token;
+  const [tasks, setTasks] = useState();
+  const getTasks = async () => {
+    // setIsLoading(true);
+    try {
+      const { data } = await axios.get(`${API_URL}/api/todolist`, {
+        headers: {
+          auth: auth,
+        },
+      });
+      setTasks(Object(data?.data?.todos));
+      // setIsLoading(false);
+    } catch (error) {
+      toast.error(error.message);
+      // setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const get = async () => {
-      const data = await getApi(auth);
-      setTodos(Object(data?.data?.data?.todos));
-      localStorage.setItem("todos", JSON.stringify(todos));
-    };
-    get();
+    getTasks();
   }, []);
 
   const [desc, setDesc] = useState();
@@ -35,9 +47,11 @@ function Home() {
         toast(result.data.message);
         // console.log(result.data.message);
         // localStorage.setItem("todos", JSON.stringify(result.data.data));
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1000);
+        getTasks();
+
         return;
       }
       if (result.data.status === 201) {
@@ -61,6 +75,8 @@ function Home() {
     if (result.status == 200) {
       if (result.data.status === 200) {
         toast(result.data.message);
+        getTasks();
+
         // console.log(result.data.message);
         // localStorage.setItem("user", JSON.stringify(result.data.data));
 
@@ -125,9 +141,9 @@ function Home() {
       </div>
       <div className="container bs-docs-section mt-4 ">
         <div className="row">
-          {todos && todos != null ? (
+          {tasks ? (
             <>
-              {todos?.map((item) => {
+              {tasks?.map((item) => {
                 return (
                   <>
                     <>
