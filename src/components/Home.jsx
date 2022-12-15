@@ -50,6 +50,7 @@ function Home() {
         // setTimeout(() => {
         //   window.location.reload();
         // }, 1000);
+        setDesc("");
         getTasks();
 
         return;
@@ -117,6 +118,7 @@ function Home() {
                     <input
                       type="text"
                       onChange={(e) => setDesc(e.target.value)}
+                      value={desc}
                       class="form-control mx-2"
                       placeholder="Description Todo"
                       aria-label="Recipient's username"
